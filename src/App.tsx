@@ -32,7 +32,6 @@ function App() {
       try {
         const availableStocks = await getAvailableStocks();
         const totalProfit = await getTotalProfit(1);
-        
 
         setProfit(totalProfit.profit);
         setStocks(availableStocks);
