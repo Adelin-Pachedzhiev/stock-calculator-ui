@@ -3,14 +3,12 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
   Grid,
   Paper,
   Stack,
   Typography,
   useTheme,
   styled,
-  Divider,
 } from "@mui/material";
 import InvestmentsTable from "../components/InvestmentsTable";
 import StockTransactionForm from "../components/StockTransactionForm";
