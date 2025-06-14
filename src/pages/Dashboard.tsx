@@ -13,7 +13,6 @@ import AvailableStocksTable from "../components/AvailableStocksTable";
 import TransactionsTable from "../components/TransactionsTable";
 import { useNavigate } from "react-router-dom";
 import InvestmentsTable from "../components/InvestmentsTable";
-import StockTransactionForm from "../components/StockTransactionForm";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -44,9 +43,6 @@ const Dashboard = () => {
           </Grid>
           <Grid>
             <InvestmentsTable />
-          </Grid>
-          <Grid>
-            <StockTransactionForm/>
           </Grid>
         </Grid>
       </Container>
