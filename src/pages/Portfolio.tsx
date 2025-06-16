@@ -49,81 +49,83 @@ const Portfolio = () => {
   const theme = useTheme();
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Header Section */}
-      <GradientHeader>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h4" fontWeight="bold">
-            My Portfolio
-          </Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => setIsTransactionDialogOpen(true)}
-            sx={{ 
-              backgroundColor: 'white',
-              color: theme.palette.primary.main,
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              }
-            }}
-          >
-            Add Transaction
-          </Button>
-        </Stack>
-      </GradientHeader>
+    <Box sx={{ minHeight: "100vh", bgcolor: theme.palette.background.default }}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        {/* Header Section */}
+        <GradientHeader>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h4" fontWeight="bold">
+              My Portfolio
+            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setIsTransactionDialogOpen(true)}
+              sx={{ 
+                backgroundColor: 'white',
+                color: theme.palette.primary.main,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                }
+              }}
+            >
+              Add Transaction
+            </Button>
+          </Stack>
+        </GradientHeader>
 
-      {/* Portfolio Stats */}
-      <Box sx={{ width: '100%', mb: 4 }}>
-        <Grid container spacing={3}>
-          {/* Portfolio Value */}
-          <Grid item xs={12} md={6}>
-            <StyledPaper elevation={2}>
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                Total Portfolio Value
-              </Typography>
-              <Typography variant="h4" component="div">
-                $4,500.00
-              </Typography>
-            </StyledPaper>
+        {/* Portfolio Stats */}
+        <Box sx={{ width: '100%', mb: 4 }}>
+          <Grid container spacing={3}>
+            {/* Portfolio Value */}
+            <Grid component="div" xs={12} md={6}>
+              <StyledPaper elevation={2}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  Total Portfolio Value
+                </Typography>
+                <Typography variant="h4" component="div">
+                  $4,500.00
+                </Typography>
+              </StyledPaper>
+            </Grid>
+
+            {/* Unrealized Profit/Loss */}
+            <Grid component="div" xs={12} md={6}>
+              <StyledPaper elevation={2}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  Unrealized Profit/Loss
+                </Typography>
+                <Typography variant="h4" color="success.main" component="div">
+                  +$150.00
+                </Typography>
+              </StyledPaper>
+            </Grid>
           </Grid>
+        </Box>
 
-          {/* Unrealized Profit/Loss */}
-          <Grid item xs={12} md={6}>
-            <StyledPaper elevation={2}>
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                Unrealized Profit/Loss
-              </Typography>
-              <Typography variant="h4" color="success.main" component="div">
-                +$150.00
-              </Typography>
-            </StyledPaper>
-          </Grid>
-        </Grid>
-      </Box>
+        {/* Investments Table */}
+        <Box sx={{ mb: 4 }}>
+          <SectionTitle variant="h5" fontWeight="medium">
+            My Investments
+          </SectionTitle>
+          <InvestmentsTable />
+        </Box>
 
-      {/* Investments Table */}
-      <Box sx={{ mb: 4 }}>
-        <SectionTitle variant="h5" fontWeight="medium">
-          My Investments
-        </SectionTitle>
-        <InvestmentsTable />
-      </Box>
+        {/* Stock Holdings Table */}
+        <Box sx={{ mb: 4 }}>
+          <SectionTitle variant="h5" fontWeight="medium">
+            Recent Transactions
+          </SectionTitle>
+          <StockTransactionsTable />
+        </Box>
 
-      {/* Stock Holdings Table */}
-      <Box sx={{ mb: 4 }}>
-        <SectionTitle variant="h5" fontWeight="medium">
-          Recent Transactions
-        </SectionTitle>
-        <StockTransactionsTable />
-      </Box>
-
-      {/* Transaction Form Dialog */}
-      <StockTransactionForm 
-        open={isTransactionDialogOpen} 
-        onClose={() => setIsTransactionDialogOpen(false)} 
-      />
-    </Container>
+        {/* Transaction Form Dialog */}
+        <StockTransactionForm 
+          open={isTransactionDialogOpen} 
+          onClose={() => setIsTransactionDialogOpen(false)} 
+        />
+      </Container>
+    </Box>
   );
 };
 
