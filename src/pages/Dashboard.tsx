@@ -17,7 +17,7 @@ import InvestmentsTable from "../components/InvestmentsTable";
 const Dashboard = () => {
   const navigate = useNavigate();
   return (
-    <Box>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <AppBar position="static">
         <Toolbar>
           <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
