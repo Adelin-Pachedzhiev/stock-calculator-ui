@@ -8,10 +8,16 @@ import {
   MenuItem,
   TextField,
   Typography,
+  Alert,
 } from "@mui/material";
 import { useState } from "react";
+import { createStockTransaction, TransactionType } from "../services/stockTransactionService";
 
-const mockStocks = ["AAPL", "TSLA", "MSFT"];
+const mockStocks = [
+  { id: 1, symbol: "AAPL" },
+  { id: 2, symbol: "TSLA" },
+  { id: 3, symbol: "MSFT" },
+];
 
 interface StockTransactionFormProps {
   open: boolean;
@@ -23,22 +29,38 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
   const [time, setTime] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [fee, setFee] = useState("");
-  const [type, setType] = useState("BUY");
+  const [fee, setFee] = useState("0");
+  const [type, setType] = useState<TransactionType>(TransactionType.BUY);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = {
-      symbol,
-      time,
-      price: +price,
-      quantity: +quantity,
-      fee: +fee || 0,
-      type,
-    };
-    console.log("Submitted transaction:", data);
-    // Add your backend call here
-    onClose(); // Close the dialog after submission
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const selectedStock = mockStocks.find(s => s.symbol === symbol);
+      if (!selectedStock) {
+        throw new Error("Invalid stock selected");
+      }
+
+      const data = {
+        stockId: selectedStock.id,
+        quantity: +quantity,
+        price: +price,
+        fee: +fee,
+        type,
+        timeOfTransaction: time,
+      };
+
+      await createStockTransaction(data);
+      handleClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create transaction");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -47,8 +69,9 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
     setTime("");
     setPrice("");
     setQuantity("");
-    setFee("");
-    setType("BUY");
+    setFee("0");
+    setType(TransactionType.BUY);
+    setError(null);
     onClose();
   };
 
@@ -60,6 +83,12 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
 
       <Box component="form" onSubmit={handleSubmit}>
         <DialogContent>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          
           <Box display="flex" flexDirection="column" gap={3} sx={{ mt: 2 }}>
             <TextField
               select
@@ -70,8 +99,8 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
               fullWidth
             >
               {mockStocks.map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s}
+                <MenuItem key={s.id} value={s.symbol}>
+                  {s.symbol}
                 </MenuItem>
               ))}
             </TextField>
@@ -102,7 +131,7 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
-                slotProps={{ htmlInput: { min: 1, step: "1" }}}
+                slotProps={{ htmlInput: { min: 0, step: "0.01" }}}
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
@@ -119,18 +148,18 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
               select
               label="Transaction Type"
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => setType(e.target.value as TransactionType)}
               required
               fullWidth
             >
-              <MenuItem value="BUY">Buy</MenuItem>
-              <MenuItem value="SELL">Sell</MenuItem>
+              <MenuItem value={TransactionType.BUY}>Buy</MenuItem>
+              <MenuItem value={TransactionType.SELL}>Sell</MenuItem>
             </TextField>
           </Box>
         </DialogContent>
 
         <DialogActions sx={{ p: 3, pt: 0 }}>
-          <Button onClick={handleClose} color="inherit">
+          <Button onClick={handleClose} color="inherit" disabled={isSubmitting}>
             Cancel
           </Button>
           <Button
@@ -138,8 +167,9 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
             variant="contained"
             size="large"
             sx={{ minWidth: 120 }}
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </Button>
         </DialogActions>
       </Box>

@@ -14,7 +14,8 @@ type IntegrationType = 'trading' | 'plaid' | null;
 
 interface AddIntegrationDialogProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (added?: boolean) => void;
+  onAdded?: () => void;
 }
 
 const AddIntegrationDialog = ({ open, onClose }: AddIntegrationDialogProps) => {
@@ -28,13 +29,15 @@ const AddIntegrationDialog = ({ open, onClose }: AddIntegrationDialogProps) => {
   const handleTradingSubmit = (token: string) => {
     // TODO: Implement Trading212 integration
     console.log("Trading212 token:", token);
-    handleClose();
+    onClose(true); // Indicate integration was added
+    setSelectedType(null);
   };
 
   const handlePlaidSuccess = () => {
     // TODO: Handle successful Plaid integration
     console.log("Plaid integration successful");
-    handleClose();
+    onClose(true); // Indicate integration was added
+    setSelectedType(null);
   };
 
   const renderContent = () => {

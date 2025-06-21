@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -17,30 +17,37 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import AddIntegrationDialog from "../components/AddIntegrationDialog";
+import api from "../services/axiosInstanceProvider";
 
 interface Integration {
   id: string;
   platform: string;
-  dateAdded: string;
+  lastChangedAt: string;
 }
 
-const mockIntegrations: Integration[] = [
-  {
-    id: "1",
-    platform: "Plaid",
-    dateAdded: "2024-03-15",
-  },
-  {
-    id: "2",
-    platform: "Trading212",
-    dateAdded: "2024-03-10",
-  },
-];
-
 const Integrations = () => {
-  const [integrations, setIntegrations] = useState<Integration[]>(mockIntegrations);
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
+
+  const fetchIntegrations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get("/integration");
+      setIntegrations(response.data);
+    } catch (err: any) {
+      setError(err?.message || "Failed to fetch integrations");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIntegrations();
+  }, []);
 
   const handleRemoveIntegration = (id: string) => {
     setIntegrations(integrations.filter(integration => integration.id !== id));
@@ -50,8 +57,11 @@ const Integrations = () => {
     setIsAddDialogOpen(true);
   };
 
-  const handleDialogClose = () => {
+  const handleDialogClose = (added?: boolean) => {
     setIsAddDialogOpen(false);
+    if (added) {
+      fetchIntegrations();
+    }
   };
 
   return (
@@ -86,22 +96,19 @@ const Integrations = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {integrations.map((integration) => (
-                <TableRow key={integration.id}>
-                  <TableCell>{integration.platform}</TableCell>
-                  <TableCell>{new Date(integration.dateAdded).toLocaleDateString()}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      onClick={() => handleRemoveIntegration(integration.id)}
-                      color="error"
-                      size="small"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    <Typography color="text.secondary">Loading...</Typography>
                   </TableCell>
                 </TableRow>
-              ))}
-              {integrations.length === 0 && (
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    <Typography color="error.main">{error}</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : integrations.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} align="center">
                     <Typography color="text.secondary">
@@ -109,6 +116,22 @@ const Integrations = () => {
                     </Typography>
                   </TableCell>
                 </TableRow>
+              ) : (
+                integrations.map((integration) => (
+                  <TableRow key={integration.id}>
+                    <TableCell>{integration.platform}</TableCell>
+                    <TableCell>{new Date(integration.lastChangedAt).toLocaleDateString()}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        onClick={() => handleRemoveIntegration(integration.id)}
+                        color="error"
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>

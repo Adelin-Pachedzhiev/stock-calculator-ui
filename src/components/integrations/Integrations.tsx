@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Typography, Paper } from '@mui/material';
-import LinkToken from './LinkToken';
+import LinkToken from './plaid/LinkToken';
 
 const Integrations = () => {
   return (

@@ -1,4 +1,5 @@
 import { Box, Button, DialogActions, TextField, useTheme } from "@mui/material";
+import api from "../../../services/axiosInstanceProvider";
 
 interface Trading212FormProps {
   onSubmit: (token: string) => void;
@@ -8,11 +9,13 @@ interface Trading212FormProps {
 const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
   const theme = useTheme();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const token = formData.get('token') as string;
-    onSubmit(token);
+    const secret = formData.get('token') as string;
+    await api.post("/integration/trading212", { secret });
+    
+    onSubmit(secret);
   };
 
   return (
