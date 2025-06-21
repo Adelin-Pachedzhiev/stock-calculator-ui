@@ -6,8 +6,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
-  useTheme,
+  Typography
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +15,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const AppHeader = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
