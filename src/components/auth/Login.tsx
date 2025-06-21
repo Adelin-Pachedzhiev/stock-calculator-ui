@@ -2,7 +2,6 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { exchangeGoogleTokenForJwtToken } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
-import LinkToken from "../plaid/LinkToken";
 
 const Login = () => {
   const navigate = useNavigate();
