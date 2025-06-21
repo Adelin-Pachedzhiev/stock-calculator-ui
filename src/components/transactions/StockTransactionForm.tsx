@@ -10,8 +10,14 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { useState } from "react";
-import { createStockTransaction, TransactionType } from "../../services/stockTransactionService";
+import { useEffect, useState } from "react";
+import {
+  createStockTransaction,
+  getStockTransaction,
+  TransactionType,
+  updateStockTransaction,
+} from "../../services/stockTransactionService";
+import type { TransactionPayload } from "../../services/stockTransactionService";
 
 const mockStocks = [
   { id: 1, symbol: "AAPL" },
@@ -22,9 +28,18 @@ const mockStocks = [
 interface StockTransactionFormProps {
   open: boolean;
   onClose: () => void;
+  onTransactionCreated?: () => void;
+  transactionId?: number | null;
+  stockSymbol?: string | null;
 }
 
-const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
+const StockTransactionForm = ({
+  open,
+  onClose,
+  onTransactionCreated,
+  transactionId,
+  stockSymbol,
+}: StockTransactionFormProps) => {
   const [symbol, setSymbol] = useState("");
   const [time, setTime] = useState("");
   const [price, setPrice] = useState("");
@@ -34,18 +49,45 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (stockSymbol && !transactionId) {
+      setSymbol(stockSymbol);
+    }
+  }, [stockSymbol, transactionId]);
+
+  useEffect(() => {
+    if (transactionId && open) {
+      const fetchTransaction = async () => {
+        try {
+          const tx = await getStockTransaction(transactionId);
+          setSymbol(tx.symbol);
+          setTime(tx.timeOfTransaction);
+          setPrice(tx.price.toString());
+          setQuantity(tx.quantity.toString());
+          setFee(tx.fee.toString());
+          setType(tx.type);
+        } catch (error) {
+          setError("Failed to fetch transaction details.");
+        }
+      };
+      fetchTransaction();
+    } else if (!open) {
+      handleClose(true);
+    }
+  }, [transactionId, open]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
     try {
-      const selectedStock = mockStocks.find(s => s.symbol === symbol);
+      const selectedStock = mockStocks.find((s) => s.symbol === symbol);
       if (!selectedStock) {
         throw new Error("Invalid stock selected");
       }
 
-      const data = {
+      const data: TransactionPayload = {
         stockId: selectedStock.id,
         quantity: +quantity,
         price: +price,
@@ -54,16 +96,26 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
         timeOfTransaction: time,
       };
 
-      await createStockTransaction(data);
+      if (transactionId) {
+        await updateStockTransaction(transactionId, data);
+      } else {
+        await createStockTransaction(data);
+      }
+
+      if (onTransactionCreated) {
+        onTransactionCreated();
+      }
       handleClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create transaction");
+      setError(
+        err instanceof Error ? err.message : "Failed to save transaction"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (isInternalCall = false) => {
     // Reset form state
     setSymbol("");
     setTime("");
@@ -72,13 +124,15 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
     setFee("0");
     setType(TransactionType.BUY);
     setError(null);
-    onClose();
+    if (!isInternalCall) {
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={() => handleClose()} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">Create Stock Transaction</Typography>
+        <Typography variant="h6">{transactionId ? "Edit" : "Create"} Stock Transaction</Typography>
       </DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit}>
@@ -88,7 +142,7 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
               {error}
             </Alert>
           )}
-          
+
           <Box display="flex" flexDirection="column" gap={3} sx={{ mt: 2 }}>
             <TextField
               select
@@ -122,7 +176,7 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                slotProps={{ htmlInput: { min: 0, step: "0.01" }}}
+                slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
@@ -131,7 +185,7 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
-                slotProps={{ htmlInput: { min: 0, step: "0.01" }}}
+                slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
@@ -159,7 +213,11 @@ const StockTransactionForm = ({ open, onClose }: StockTransactionFormProps) => {
         </DialogContent>
 
         <DialogActions sx={{ p: 3, pt: 0 }}>
-          <Button onClick={handleClose} color="inherit" disabled={isSubmitting}>
+          <Button
+            onClick={() => handleClose()}
+            color="inherit"
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button

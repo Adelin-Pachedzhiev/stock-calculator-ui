@@ -5,6 +5,7 @@ import Integrations from "./pages/Integrations";
 import Portfolio from "./pages/Portfolio";
 import AppHeader from "./components/common/AppHeader";
 import { Box } from "@mui/material";
+import Stock from "./pages/Stock";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/integrations" element={<Integrations/>}/>
             <Route path="/portfolio" element={<Portfolio/>}/>
+            <Route path="/stock/:symbol" element={<Stock />} />
           </Routes>
         </Box>
       </Box>

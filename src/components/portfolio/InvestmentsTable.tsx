@@ -110,7 +110,7 @@ const InvestmentsTable = () => {
                 <TableRow
                   key={stock.id}
                   hover
-                  onClick={() => navigate(`/stocks/${stock.id}`)}
+                  onClick={() => navigate(`/stock/${stock.id}`)}
                   sx={{ 
                     '&:hover': {
                       cursor: 'pointer',

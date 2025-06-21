@@ -14,6 +14,7 @@ import InvestmentsTable from "../components/portfolio/InvestmentsTable";
 import StockTransactionForm from "../components/transactions/StockTransactionForm";
 import StockTransactionsTable from "../components/portfolio/StockTransactionsTable";
 import PortfolioValueCard from "../components/portfolio/PortfolioValueCard";
+import AddTransactionDialog from "../components/transactions/AddTransactionDialog";
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -49,6 +50,12 @@ const Portfolio = () => {
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
   const theme = useTheme();
 
+  const handleTransactionCreated = () => {
+    // For now, we can just log this. In a real app, we would refetch data.
+    console.log("Transaction created, refresh portfolio data...");
+    setIsTransactionDialogOpen(false);
+  }
+
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: theme.palette.background.default }}>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -58,20 +65,16 @@ const Portfolio = () => {
             <Typography variant="h4" fontWeight="bold">
               My Portfolio
             </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => setIsTransactionDialogOpen(true)}
-              sx={{ 
+            <AddTransactionDialog 
+              onTransactionCreated={handleTransactionCreated} 
+              sx={{
                 backgroundColor: 'white',
-                color: theme.palette.primary.main,
+                color: 'primary.main',
                 '&:hover': {
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 }
               }}
-            >
-              Add Transaction
-            </Button>
+            />
           </Stack>
         </GradientHeader>
 
