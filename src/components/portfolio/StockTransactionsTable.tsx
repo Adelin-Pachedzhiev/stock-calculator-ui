@@ -14,8 +14,8 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { getTransactions } from '../services/stockProfitService';
-import ErrorDialog from './ErrorDialog';
+import { getTransactions } from '../../services/stockProfitService';
+import ErrorDialog from '../common/ErrorDialog';
 
 type Transaction = {
   id: number;

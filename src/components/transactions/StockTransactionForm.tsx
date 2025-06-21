@@ -11,7 +11,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useState } from "react";
-import { createStockTransaction, TransactionType } from "../services/stockTransactionService";
+import { createStockTransaction, TransactionType } from "../../services/stockTransactionService";
 
 const mockStocks = [
   { id: 1, symbol: "AAPL" },

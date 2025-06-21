@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import AddIntegrationDialog from "../components/AddIntegrationDialog";
+import AddIntegrationDialog from "../components/integrations/AddIntegrationDialog";
 import api from "../services/axiosInstanceProvider";
 
 interface Integration {

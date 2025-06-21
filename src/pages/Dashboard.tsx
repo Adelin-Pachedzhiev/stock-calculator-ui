@@ -7,12 +7,12 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import CurrentProfitCard from "../components/CurrentProfitCard";
-import ProfitPerStockCard from "../components/ProfitPerStockCard";
-import AvailableStocksTable from "../components/AvailableStocksTable";
-import TransactionsTable from "../components/TransactionsTable";
+import PortfolioValueCard from "../components/portfolio/PortfolioValueCard";
+import ProfitPerStockCard from "../components/portfolio/ProfitPerStockCard";
+import AvailableStocksTable from "../components/dashboard/AvailableStocksTable";
+import StockTransactionsTable from "../components/portfolio/StockTransactionsTable";
+import InvestmentsTable from "../components/portfolio/InvestmentsTable";
 import { useNavigate } from "react-router-dom";
-import InvestmentsTable from "../components/InvestmentsTable";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -29,19 +29,19 @@ const Dashboard = () => {
 
       <Container sx={{ mt: 4 }}>
         <Grid container spacing={4}>
-          <Grid>
-            <CurrentProfitCard />
+          <Grid size={{ xs: 12 }}>
+            <PortfolioValueCard />
           </Grid>
-          <Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
             <ProfitPerStockCard />
           </Grid>
-          <Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
             <AvailableStocksTable />
           </Grid>
-          <Grid>
-            <TransactionsTable />
+          <Grid size={{ xs: 12 }}>
+            <StockTransactionsTable />
           </Grid>
-          <Grid>
+          <Grid size={{ xs: 12 }}>
             <InvestmentsTable />
           </Grid>
         </Grid>

@@ -2,7 +2,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { usePlaidLink, type PlaidLinkOptions } from "react-plaid-link";
 import api from "../../../services/axiosInstanceProvider";
-import ErrorDialog from "../../ErrorDialog";
+import ErrorDialog from "../../common/ErrorDialog";
 
 interface PlaidIntegrationProps {
   onBack: () => void;

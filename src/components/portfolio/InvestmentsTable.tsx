@@ -14,8 +14,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getProfits } from "../services/stockProfitService";
-import ErrorDialog from "./ErrorDialog";
+import { getProfits } from "../../services/stockProfitService";
+import ErrorDialog from "../common/ErrorDialog";
 
 type Stock = {
   id: string;

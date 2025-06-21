@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getTotalProfit } from "../services/stockProfitService";
+import { getTotalProfit } from "../../services/stockProfitService";
 
 const PortfolioValueCard = () => {
   const [totalValue, setTotalValue] = useState<number | null>(null);

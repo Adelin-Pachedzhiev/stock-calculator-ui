@@ -3,7 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./components/auth/Login";
 import Integrations from "./pages/Integrations";
 import Portfolio from "./pages/Portfolio";
-import AppHeader from "./components/AppHeader";
+import AppHeader from "./components/common/AppHeader";
 import { Box } from "@mui/material";
 
 function App() {

@@ -6,9 +6,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import IntegrationTypeButton from "./integrations/IntegrationTypeButton";
-import Trading212Form from "./integrations/trading212/Trading212Form";
-import PlaidIntegration from "./integrations/plaid/PlaidIntegration";
+import IntegrationTypeButton from "./IntegrationTypeButton";
+import Trading212Form from "./trading212/Trading212Form";
+import PlaidIntegration from "./plaid/PlaidIntegration";
 
 type IntegrationType = 'trading' | 'plaid' | null;
 

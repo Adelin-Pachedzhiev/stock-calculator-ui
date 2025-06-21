@@ -10,10 +10,10 @@ import {
   useTheme,
   styled,
 } from "@mui/material";
-import InvestmentsTable from "../components/InvestmentsTable";
-import StockTransactionForm from "../components/StockTransactionForm";
-import StockTransactionsTable from "../components/StockTransactionsTable";
-import PortfolioValueCard from "../components/PortfolioValueCard";
+import InvestmentsTable from "../components/portfolio/InvestmentsTable";
+import StockTransactionForm from "../components/transactions/StockTransactionForm";
+import StockTransactionsTable from "../components/portfolio/StockTransactionsTable";
+import PortfolioValueCard from "../components/portfolio/PortfolioValueCard";
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({

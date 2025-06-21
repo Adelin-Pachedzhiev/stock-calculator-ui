@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getAvailableStocks } from "../services/stockProfitService";
+import { getAvailableStocks } from "../../services/stockProfitService";
 
 const AvailableStocksTable = () => {
   const [stocks, setStocks] = useState<Array<{ symbol: string; name: string }>>(
