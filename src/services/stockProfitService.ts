@@ -1,10 +1,5 @@
 import api from "./axiosInstanceProvider";
 
-export const getTotalProfit = async () => {
-  const response = await api.get("/stock/profit/total");
-  return response.data;
-};
-
 export const getProfits = async () => {
   const response = await api.get("/stock/profit");
   return response.data;

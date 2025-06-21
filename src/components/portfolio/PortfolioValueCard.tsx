@@ -1,58 +1,65 @@
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getTotalProfit } from "../../services/stockProfitService";
+import { getPortfolioOverview } from "../../services/portfolioService";
+import type { PortfolioOverview } from "../../services/portfolioService";
+import ErrorDialog from "../common/ErrorDialog";
+import StatCard from "../common/StatCard";
 
 const PortfolioValueCard = () => {
-  const [totalValue, setTotalValue] = useState<number | null>(null);
-  const [profit, setProfit] = useState<number | null>(null);
+  const [overview, setOverview] = useState<PortfolioOverview | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const totalProfit = await getTotalProfit();
-      setProfit(totalProfit.profit);
-      // For now, we'll use a mock total value. In a real app, this would come from the backend
-      // setTotalValue(4500); // Mock value
+      try {
+        setLoading(true);
+        const data = await getPortfolioOverview();
+        setOverview(data);
+      } catch (err) {
+        setError("Failed to load portfolio overview.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
 
+  if (loading) {
+    return (
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 120 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Card sx={{ width: '100%' }}>
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 4,
-          px: 4,
-          py: 2,
-        }}
-      >
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <Typography variant="body2" color="text.secondary">
-            Total Portfolio Value
-          </Typography>
-          <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
-            ${totalValue?.toFixed(2) || "0.00"}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          <Typography variant="body2" color="text.secondary">
-            Unrealized Gain/Loss
-          </Typography>
-          <Typography
-            variant="h5"
-            color={profit && profit > 0 ? "success.main" : "error.main"}
-            sx={{ fontWeight: 600 }}
-          >
-            {profit !== null
-              ? `${profit > 0 ? "+" : ""}$${profit.toFixed(2)}`
-              : "$0.00"}
-          </Typography>
-        </Box>
-      </CardContent>
-    </Card>
+    <>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatCard
+            title="Total Portfolio Value"
+            value={`$${overview?.currentMarketValue?.toFixed(2) || "0.00"}`}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatCard
+            title="Total Invested"
+            value={`$${overview?.totalInvestmentCost?.toFixed(2) || "0.00"}`}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatCard
+            title="Unrealized Gain/Loss"
+            value={`${overview?.totalProfit ?? 0 >= 0 ? '+' : ''}$${overview?.totalProfit?.toFixed(2) || "0.00"}`}
+            secondaryValue={`(${overview?.totalProfitPercentage ?? 0 >= 0 ? '+' : ''}${overview?.totalProfitPercentage?.toFixed(2) || "0.00"}%)`}
+            valueColor={overview?.totalProfit ?? 0 >= 0 ? "success.main" : "error.main"}
+          />
+        </Grid>
+      </Grid>
+      <ErrorDialog message={error} onClose={() => setError(null)} />
+    </>
   );
 };
 
