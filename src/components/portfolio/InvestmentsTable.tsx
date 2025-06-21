@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -31,6 +31,7 @@ const InvestmentsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,11 +110,8 @@ const InvestmentsTable = () => {
                 <TableRow
                   key={stock.id}
                   hover
-                  component={Link}
-                  to={`/stocks/${stock.id}`}
+                  onClick={() => navigate(`/stocks/${stock.id}`)}
                   sx={{ 
-                    textDecoration: "none", 
-                    color: "inherit",
                     '&:hover': {
                       cursor: 'pointer',
                     },
