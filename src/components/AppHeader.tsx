@@ -34,6 +34,7 @@ const AppHeader = () => {
 
   const handleLogout = () => {
     handleClose();
+    localStorage.removeItem("jwtToken")
     // TODO: Implement logout logic
   };
 
