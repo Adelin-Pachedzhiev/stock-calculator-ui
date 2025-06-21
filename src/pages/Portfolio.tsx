@@ -13,6 +13,7 @@ import {
 import InvestmentsTable from "../components/InvestmentsTable";
 import StockTransactionForm from "../components/StockTransactionForm";
 import StockTransactionsTable from "../components/StockTransactionsTable";
+import PortfolioValueCard from "../components/PortfolioValueCard";
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -77,28 +78,9 @@ const Portfolio = () => {
         {/* Portfolio Stats */}
         <Box sx={{ width: '100%', mb: 4 }}>
           <Grid container spacing={3}>
-            {/* Portfolio Value */}
-            <Grid component="div" xs={12} md={6}>
-              <StyledPaper elevation={2}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  Total Portfolio Value
-                </Typography>
-                <Typography variant="h4" component="div">
-                  $4,500.00
-                </Typography>
-              </StyledPaper>
-            </Grid>
-
-            {/* Unrealized Profit/Loss */}
-            <Grid component="div" xs={12} md={6}>
-              <StyledPaper elevation={2}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  Unrealized Profit/Loss
-                </Typography>
-                <Typography variant="h4" color="success.main" component="div">
-                  +$150.00
-                </Typography>
-              </StyledPaper>
+            {/* Portfolio Value and Unrealized Profit/Loss */}
+            <Grid size={12}>
+              <PortfolioValueCard />
             </Grid>
           </Grid>
         </Box>
