@@ -9,16 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getAvailableStocks } from "../../services/stockProfitService";
+import { getAvailableStocks, type StockEntity } from "../../services/stockService";
 
 const AvailableStocksTable = () => {
-  const [stocks, setStocks] = useState<Array<{ symbol: string; name: string }>>(
-    []
-  );
+  const [stocks, setStocks] = useState<StockEntity[]>([]);
 
   useEffect(() => {
     async function fetchData() {
-      const availableStocks = await getAvailableStocks();
+      const availableStocks : StockEntity[] = await getAvailableStocks();
       setStocks(availableStocks);
     }
 

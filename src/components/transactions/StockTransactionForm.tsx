@@ -18,12 +18,7 @@ import {
   updateStockTransaction,
 } from "../../services/stockTransactionService";
 import type { TransactionPayload } from "../../services/stockTransactionService";
-
-const mockStocks = [
-  { id: 1, symbol: "AAPL" },
-  { id: 2, symbol: "TSLA" },
-  { id: 3, symbol: "MSFT" },
-];
+import { getAvailableStocks, type StockEntity } from "../../services/stockService";
 
 interface StockTransactionFormProps {
   open: boolean;
@@ -48,6 +43,22 @@ const StockTransactionForm = ({
   const [type, setType] = useState<TransactionType>(TransactionType.BUY);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [stocks, setStocks] = useState<StockEntity[]>([]);
+
+  useEffect(() => {
+    if (open && stocks.length === 0) {
+      const fetchStocks = async () => {
+        try {
+          const availableStocks = await getAvailableStocks();
+          setStocks(availableStocks);
+        } catch (error) {
+          setError("Failed to fetch available stocks.");
+        }
+      };
+
+      fetchStocks();
+    }
+  }, [open, stocks]);
 
   useEffect(() => {
     if (stockSymbol && !transactionId) {
@@ -82,7 +93,7 @@ const StockTransactionForm = ({
     setIsSubmitting(true);
 
     try {
-      const selectedStock = mockStocks.find((s) => s.symbol === symbol);
+      const selectedStock = stocks.find((s) => s.symbol === symbol);
       if (!selectedStock) {
         throw new Error("Invalid stock selected");
       }
@@ -152,9 +163,9 @@ const StockTransactionForm = ({
               required
               fullWidth
             >
-              {mockStocks.map((s) => (
+              {stocks.map((s) => (
                 <MenuItem key={s.id} value={s.symbol}>
-                  {s.symbol}
+                  {`${s.symbol} - ${s.name}`}
                 </MenuItem>
               ))}
             </TextField>

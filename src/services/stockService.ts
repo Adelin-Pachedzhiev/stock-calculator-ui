@@ -41,3 +41,15 @@ export const getStockPriceHistory = async (symbol: string) => {
     }
     return data;
 } 
+
+export interface StockEntity {
+    id: number;
+    symbol: string;
+    name: string;
+    description: string;
+}
+
+export const getAvailableStocks = async () : Promise<StockEntity[]> => {
+    const response = await api.get("/stock");
+    return response.data;
+  };
