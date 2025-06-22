@@ -12,6 +12,7 @@ export interface TransactionPayload {
   fee: number;
   type: TransactionType;
   timeOfTransaction: string;
+  currency: string;
 }
 
 export const createStockTransaction = async (data: TransactionPayload) => {

@@ -105,6 +105,7 @@ const StockTransactionForm = ({
         fee: +fee,
         type,
         timeOfTransaction: time,
+        currency: "USD"
       };
 
       if (transactionId) {
@@ -182,7 +183,7 @@ const StockTransactionForm = ({
 
             <Box display="flex" gap={2} flexWrap="wrap">
               <TextField
-                label="Price (€)"
+                label="Price ($)"
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
@@ -200,7 +201,7 @@ const StockTransactionForm = ({
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
-                label="Fee (€)"
+                label="Fee ($)"
                 type="number"
                 value={fee}
                 onChange={(e) => setFee(e.target.value)}
