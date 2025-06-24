@@ -48,11 +48,11 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 const Portfolio = () => {
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(true);
   const theme = useTheme();
 
   const handleTransactionCreated = () => {
-    // For now, we can just log this. In a real app, we would refetch data.
-    console.log("Transaction created, refresh portfolio data...");
+    setRefreshKey(prev => !prev);
     setIsTransactionDialogOpen(false);
   }
 
@@ -83,7 +83,7 @@ const Portfolio = () => {
           <Grid container spacing={3}>
             {/* Portfolio Value and Unrealized Profit/Loss */}
             <Grid size={12}>
-              <PortfolioValueCard />
+              <PortfolioValueCard refreshKey={refreshKey} />
             </Grid>
           </Grid>
         </Box>
@@ -93,7 +93,7 @@ const Portfolio = () => {
           <SectionTitle variant="h5" fontWeight="medium">
             My Investments
           </SectionTitle>
-          <InvestmentsTable />
+          <InvestmentsTable refreshKey={refreshKey} />
         </Box>
 
         {/* Stock Holdings Table */}
@@ -101,7 +101,7 @@ const Portfolio = () => {
           <SectionTitle variant="h5" fontWeight="medium">
             Recent Transactions
           </SectionTitle>
-          <StockTransactionsTable />
+          <StockTransactionsTable refreshKey={refreshKey} />
         </Box>
 
         {/* Transaction Form Dialog */}
