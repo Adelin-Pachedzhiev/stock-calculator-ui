@@ -1,5 +1,5 @@
 import { Box, Button, DialogActions, TextField, useTheme } from "@mui/material";
-import api from "../../../services/axiosInstanceProvider";
+import { postTrading212Token } from "../../../services/trading212Service";
 
 interface Trading212FormProps {
   onSubmit: (token: string) => void;
@@ -13,7 +13,7 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const secret = formData.get('token') as string;
-    await api.post("/integration/trading212", { secret });
+    await postTrading212Token(secret);
     
     onSubmit(secret);
   };

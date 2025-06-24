@@ -48,7 +48,7 @@ const AddIntegrationDialog = ({ open, onClose }: AddIntegrationDialogProps) => {
             Connect Trading212 Account
           </IntegrationTypeButton>
           <IntegrationTypeButton onClick={() => setSelectedType('plaid')}>
-            Connect Bank Account (Plaid)
+            Connect To Investments Platform using Plaid
           </IntegrationTypeButton>
         </Box>
       );
