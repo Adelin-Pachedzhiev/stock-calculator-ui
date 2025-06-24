@@ -6,7 +6,11 @@ import { formatCurrency, formatCurrencyWithSign, formatPercentageWithSign } from
 import ErrorDialog from "../common/ErrorDialog";
 import StatCard from "../common/StatCard";
 
-const PortfolioValueCard = () => {
+interface PortfolioValueCardProps {
+  refreshKey?: boolean;
+}
+
+const PortfolioValueCard = ({ refreshKey }: PortfolioValueCardProps) => {
   const [overview, setOverview] = useState<PortfolioOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +29,7 @@ const PortfolioValueCard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [refreshKey]);
 
   if (loading) {
     return (

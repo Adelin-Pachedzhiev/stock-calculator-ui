@@ -30,7 +30,11 @@ type Transaction = {
   type: string;
 };
 
-const StockTransactionsTable = () => {
+interface StockTransactionsTableProps {
+  refreshKey?: boolean;
+}
+
+const StockTransactionsTable = ({ refreshKey }: StockTransactionsTableProps) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +60,7 @@ const StockTransactionsTable = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [refreshKey]);
 
   if (loading) {
     return (

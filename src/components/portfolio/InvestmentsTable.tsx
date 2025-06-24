@@ -26,7 +26,11 @@ type Stock = {
   profitPercentage: number;
 };
 
-const InvestmentsTable = () => {
+interface InvestmentsTableProps {
+  refreshKey?: boolean;
+}
+
+const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +61,7 @@ const InvestmentsTable = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refreshKey]);
 
   if (loading) {
     return (
