@@ -16,8 +16,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import SyncIcon from "@mui/icons-material/Sync";
 import AddIntegrationDialog from "../components/integrations/AddIntegrationDialog";
 import api from "../services/axiosInstanceProvider";
+import { syncIntegration } from "../services/portfolioService";
+import ErrorDialog from "../components/common/ErrorDialog";
 
 interface Integration {
   id: string;
@@ -30,6 +33,7 @@ const Integrations = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
   const theme = useTheme();
 
   const fetchIntegrations = async () => {
@@ -61,6 +65,18 @@ const Integrations = () => {
     setIsAddDialogOpen(false);
     if (added) {
       fetchIntegrations();
+    }
+  };
+
+  const handleSyncIntegration = async (id: string) => {
+    setSyncingId(id);
+    try {
+      await syncIntegration(id);
+      // Optionally, you can refresh integrations or show a success message
+    } catch {
+      setError("Failed to sync integration. Please try again.");
+    } finally {
+      setSyncingId(null);
     }
   };
 
@@ -102,12 +118,6 @@ const Integrations = () => {
                     <Typography color="text.secondary">Loading...</Typography>
                   </TableCell>
                 </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={3} align="center">
-                    <Typography color="error.main">{error}</Typography>
-                  </TableCell>
-                </TableRow>
               ) : integrations.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} align="center">
@@ -129,6 +139,14 @@ const Integrations = () => {
                       >
                         <DeleteIcon />
                       </IconButton>
+                      <IconButton
+                        onClick={() => handleSyncIntegration(integration.id)}
+                        color="primary"
+                        size="small"
+                        disabled={syncingId === integration.id}
+                      >
+                        <SyncIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))
@@ -142,6 +160,7 @@ const Integrations = () => {
           onClose={handleDialogClose} 
         />
       </Container>
+      <ErrorDialog message={error} onClose={() => setError(null)} />
     </Box>
   );
 };
