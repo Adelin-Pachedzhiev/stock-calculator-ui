@@ -1,11 +1,12 @@
-export interface Stock {
-    name: string;
+export interface StockDetails {
+    stockId: number;
     symbol: string;
+    name: string;
+    description: string;
     currentPrice: number;
     change: number;
     changePercent: number;
 }
-
 export interface PriceHistory {
     date: string;
     price: number;

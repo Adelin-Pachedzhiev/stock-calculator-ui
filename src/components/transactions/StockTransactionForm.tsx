@@ -71,7 +71,7 @@ const StockTransactionForm = ({
       const fetchTransaction = async () => {
         try {
           const tx = await getStockTransaction(transactionId);
-          setSymbol(tx.symbol);
+          setSymbol(tx.stock.symbol);
           setTime(tx.timeOfTransaction);
           setPrice(tx.price.toString());
           setQuantity(tx.quantity.toString());
