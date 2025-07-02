@@ -13,20 +13,14 @@ import {
   Typography,
   IconButton,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SyncIcon from "@mui/icons-material/Sync";
 import AddIntegrationDialog from "../components/integrations/AddIntegrationDialog";
-import api from "../services/axiosInstanceProvider";
-import { syncIntegration } from "../services/portfolioService";
+import { getIntegrations, deleteIntegration, syncIntegration, type Integration } from "../services/integrationService";
 import ErrorDialog from "../components/common/ErrorDialog";
-
-interface Integration {
-  id: string;
-  platform: string;
-  lastChangedAt: string;
-}
 
 const Integrations = () => {
   const [integrations, setIntegrations] = useState<Integration[]>([]);
@@ -34,14 +28,15 @@ const Integrations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [syncingId, setSyncingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const theme = useTheme();
 
   const fetchIntegrations = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get("/integration");
-      setIntegrations(response.data);
+      const data = await getIntegrations();
+      setIntegrations(data);
     } catch (err: any) {
       setError(err?.message || "Failed to fetch integrations");
     } finally {
@@ -53,8 +48,18 @@ const Integrations = () => {
     fetchIntegrations();
   }, []);
 
-  const handleRemoveIntegration = (id: string) => {
-    setIntegrations(integrations.filter(integration => integration.id !== id));
+  const handleRemoveIntegration = async (id: string) => {
+    setDeletingId(id);
+    setError(null);
+    try {
+      await deleteIntegration(id);
+      // Refresh the integrations list after successful deletion
+      await fetchIntegrations();
+    } catch (err: any) {
+      setError(err?.message || "Failed to delete integration");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleAddIntegration = () => {
@@ -70,11 +75,12 @@ const Integrations = () => {
 
   const handleSyncIntegration = async (id: string) => {
     setSyncingId(id);
+    setError(null);
     try {
       await syncIntegration(id);
       // Optionally, you can refresh integrations or show a success message
-    } catch {
-      setError("Failed to sync integration. Please try again.");
+    } catch (err: any) {
+      setError(err?.message || "Failed to sync integration. Please try again.");
     } finally {
       setSyncingId(null);
     }
@@ -115,7 +121,10 @@ const Integrations = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={3} align="center">
-                    <Typography color="text.secondary">Loading...</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
+                      <CircularProgress size={20} sx={{ mr: 1 }} />
+                      <Typography color="text.secondary">Loading...</Typography>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ) : integrations.length === 0 ? (
@@ -136,8 +145,13 @@ const Integrations = () => {
                         onClick={() => handleRemoveIntegration(integration.id)}
                         color="error"
                         size="small"
+                        disabled={deletingId === integration.id}
                       >
-                        <DeleteIcon />
+                        {deletingId === integration.id ? (
+                          <CircularProgress size={16} />
+                        ) : (
+                          <DeleteIcon />
+                        )}
                       </IconButton>
                       <IconButton
                         onClick={() => handleSyncIntegration(integration.id)}
@@ -145,7 +159,11 @@ const Integrations = () => {
                         size="small"
                         disabled={syncingId === integration.id}
                       >
-                        <SyncIcon />
+                        {syncingId === integration.id ? (
+                          <CircularProgress size={16} />
+                        ) : (
+                          <SyncIcon />
+                        )}
                       </IconButton>
                     </TableCell>
                   </TableRow>
