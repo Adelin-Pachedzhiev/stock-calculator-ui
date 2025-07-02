@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const AppHeader = () => {
@@ -25,16 +24,13 @@ const AppHeader = () => {
     setAnchorEl(null);
   };
 
-  const handleSettings = () => {
-    handleClose();
-    navigate('/settings');
-  };
-
   const handleLogout = () => {
     handleClose();
-    localStorage.removeItem("jwtToken")
-    // TODO: Implement logout logic
+    localStorage.removeItem('jwtToken');
+    navigate('/login');
   };
+
+  const isLoggedIn = !!localStorage.getItem('jwtToken');
 
   return (
     <AppBar position="static" elevation={0}>
@@ -65,36 +61,28 @@ const AppHeader = () => {
           </Button>
         </Box>
 
-        {/* Settings Button */}
-        <IconButton
-          size="large"
-          edge="end"
-          color="inherit"
-          onClick={() => navigate('/settings')}
-          sx={{ mr: 1 }}
-        >
-          <SettingsIcon />
-        </IconButton>
-
-        {/* User Menu */}
-        <IconButton
-          size="large"
-          edge="end"
-          color="inherit"
-          onClick={handleMenu}
-        >
-          <AccountCircleIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        >
-          <MenuItem onClick={handleSettings}>Settings</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        </Menu>
+        {/* User Menu (only if logged in) */}
+        {isLoggedIn && (
+          <>
+            <IconButton
+              size="large"
+              edge="end"
+              color="inherit"
+              onClick={handleMenu}
+            >
+              <AccountCircleIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );
