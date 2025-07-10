@@ -17,6 +17,7 @@ import PortfolioValueCard from "../components/portfolio/PortfolioValueCard";
 import AddTransactionDialog from "../components/transactions/AddTransactionDialog";
 import UploadCsvDialog from '../components/transactions/UploadCsvDialog';
 import { uploadTransactionsCsv } from '../services/stockTransactionService';
+import WatchlistTable from '../components/portfolio/WatchlistTable';
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -138,6 +139,14 @@ const Portfolio = () => {
             My Investments
           </SectionTitle>
           <InvestmentsTable refreshKey={refreshKey} />
+        </Box>
+
+        {/* Watchlist Table */}
+        <Box sx={{ mb: 4 }}>
+          <SectionTitle variant="h5" fontWeight="medium">
+            My Watchlist
+          </SectionTitle>
+          <WatchlistTable />
         </Box>
 
         {/* Stock Holdings Table */}
