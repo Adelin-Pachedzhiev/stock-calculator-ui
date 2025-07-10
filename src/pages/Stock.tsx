@@ -19,14 +19,13 @@ import { deleteStockTransaction } from "../services/stockTransactionService";
 import StockHeader from "../components/stock/StockHeader";
 import StockPriceChart from "../components/stock/StockPriceChart";
 import StockTransactionsTable from "../components/stock/StockTransactionsTable";
-import type { Stock as StockType, Transaction, PriceHistory } from "../types/stock";
-import AddTransactionDialog from "../components/transactions/AddTransactionDialog";
+import type { StockDetails, Transaction, PriceHistory } from "../types/stock";
 
 const Stock = () => {
   const { symbol } = useParams<{ symbol: string }>();
   const theme = useTheme();
 
-  const [stock, setStock] = useState<StockType | null>(null);
+  const [stock, setStock] = useState<StockDetails | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,11 +119,13 @@ const Stock = () => {
 
         <StockPriceChart priceHistory={priceHistory} />
 
-        <StockTransactionsTable 
-          transactions={transactions} 
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-        />
+        {transactions.length > 0 && (
+          <StockTransactionsTable 
+            transactions={transactions} 
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+          />
+        )}
 
         <StockTransactionForm
           open={isTransactionDialogOpen}
