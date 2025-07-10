@@ -20,6 +20,7 @@ import StockHeader from "../components/stock/StockHeader";
 import StockPriceChart from "../components/stock/StockPriceChart";
 import StockTransactionsTable from "../components/stock/StockTransactionsTable";
 import type { StockDetails, Transaction, PriceHistory } from "../types/stock";
+import { getWatchlist, addToWatchlist, removeFromWatchlist, isInWatchlist as checkIsInWatchlist } from '../services/watchlistService';
 
 const Stock = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -32,6 +33,7 @@ const Stock = () => {
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
+  const [isInWatchlist, setIsInWatchlist] = useState<boolean>(false);
 
   const fetchStockTransactions = async () => {
     if (!symbol) return;
@@ -94,6 +96,34 @@ const Stock = () => {
     fetchData();
   }, [symbol]);
 
+  useEffect(() => {
+    if (!stock) return;
+    const checkWatchlist = async () => {
+      try {
+        const result = await checkIsInWatchlist(stock.stockId);
+        setIsInWatchlist(result);
+      } catch (err) {
+        setIsInWatchlist(false);
+      }
+    };
+    checkWatchlist();
+  }, [stock]);
+
+  const handleToggleWatchlist = async () => {
+    if (!stock) return;
+    try {
+      if (isInWatchlist) {
+        await removeFromWatchlist(stock.stockId);
+        setIsInWatchlist(false);
+      } else {
+        await addToWatchlist(stock.stockId);
+        setIsInWatchlist(true);
+      }
+    } catch (err) {
+      // Optionally show error
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
@@ -115,7 +145,12 @@ const Stock = () => {
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: theme.palette.background.default, py: 4 }}>
       <Container maxWidth="lg">
-        <StockHeader stock={stock} onAddTransaction={handleAddClick} />
+        <StockHeader 
+          stock={stock} 
+          onAddTransaction={handleAddClick} 
+          isInWatchlist={isInWatchlist}
+          onToggleWatchlist={handleToggleWatchlist}
+        />
 
         <StockPriceChart priceHistory={priceHistory} />
 

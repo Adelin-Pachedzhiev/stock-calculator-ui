@@ -1,12 +1,16 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography, IconButton } from "@mui/material";
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import type { StockDetails } from "../../types/stock";
 
 interface StockHeaderProps {
     stock: StockDetails;
     onAddTransaction: () => void;
+    isInWatchlist: boolean;
+    onToggleWatchlist: () => void;
 }
 
-const StockHeader = ({ stock, onAddTransaction }: StockHeaderProps) => {
+const StockHeader = ({ stock, onAddTransaction, isInWatchlist, onToggleWatchlist }: StockHeaderProps) => {
     return (
         <Paper sx={{ p: 3, mb: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -21,9 +25,14 @@ const StockHeader = ({ stock, onAddTransaction }: StockHeaderProps) => {
                         </Typography>
                     </Typography>
                 </div>
-                <Button variant="contained" color="primary" onClick={onAddTransaction}>
-                    Add Transaction
-                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Button variant="contained" color="primary" onClick={onAddTransaction}>
+                        Add Transaction
+                    </Button>
+                    <IconButton onClick={onToggleWatchlist} color={isInWatchlist ? 'warning' : 'default'} aria-label="Toggle Watchlist">
+                        {isInWatchlist ? <StarIcon /> : <StarBorderIcon />}
+                    </IconButton>
+                </Box>
             </Box>
         </Paper>
     );

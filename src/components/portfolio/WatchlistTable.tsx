@@ -1,10 +1,12 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, alpha, useTheme, Box, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getWatchlist } from '../../services/watchlistService';
 import type { StockDetails } from '../../types/stock';
 
 const WatchlistTable = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [watchlist, setWatchlist] = useState<StockDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +71,7 @@ const WatchlistTable = () => {
             transition: 'background-color 0.2s',
             '&:hover': {
               backgroundColor: alpha(theme.palette.primary.main, 0.04),
+              cursor: 'pointer',
             },
           },
         },
@@ -86,7 +89,7 @@ const WatchlistTable = () => {
           </TableHead>
           <TableBody>
             {watchlist.map((stock) => (
-              <TableRow key={stock.symbol} hover>
+              <TableRow key={stock.symbol} hover onClick={() => navigate(`/stock/${stock.symbol}`)}>
                 <TableCell sx={{ fontWeight: 500 }}>{stock.name}</TableCell>
                 <TableCell sx={{ color: 'text.secondary' }}>{stock.symbol}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 500 }}>
