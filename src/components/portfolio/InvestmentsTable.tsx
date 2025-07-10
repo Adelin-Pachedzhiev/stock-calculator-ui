@@ -14,24 +14,16 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getProfits } from "../../services/stockProfitService";
+import { getStockInvestmentProfitInfo } from "../../services/stockProfitService";
+import type { StockInvestmentProfitInfo } from "../../types/stock";
 import ErrorDialog from "../common/ErrorDialog";
-
-type Stock = {
-  id: string;
-  symbol: string;
-  name: string;
-  invested: number;
-  profit: number;
-  profitPercentage: number;
-};
 
 interface InvestmentsTableProps {
   refreshKey?: boolean;
 }
 
 const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
-  const [stocks, setStocks] = useState<Stock[]>([]);
+  const [stocks, setStocks] = useState<StockInvestmentProfitInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
@@ -41,17 +33,8 @@ const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const profits = await getProfits();
-        // Transform the data to match our Stock type
-        const formattedData = profits.map((profit: any) => ({
-          id: profit.symbol.toLowerCase(),
-          symbol: profit.symbol,
-          name: profit.name || profit.symbol, // Fallback to symbol if name is not provided
-          invested: profit.invested || 0,
-          profit: profit.stockProfit.profit,
-          profitPercentage: profit.stockProfit.profitPercentage
-        }));
-        setStocks(formattedData);
+        const data = await getStockInvestmentProfitInfo();
+        setStocks(data);
       } catch (err) {
         setError('Failed to load investments');
         console.error('Error fetching investments:', err);
@@ -105,6 +88,8 @@ const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
                 <TableCell>Company</TableCell>
                 <TableCell>Symbol</TableCell>
                 <TableCell align="right">Invested</TableCell>
+                <TableCell align="right">Current Value</TableCell>
+                <TableCell align="right">Shares</TableCell>
                 <TableCell align="right">Profit/Loss</TableCell>
                 <TableCell align="right">Return</TableCell>
               </TableRow>
@@ -112,24 +97,30 @@ const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
             <TableBody>
               {stocks.map((stock) => (
                 <TableRow
-                  key={stock.id}
+                  key={stock.stock.symbol}
                   hover
-                  onClick={() => navigate(`/stock/${stock.id}`)}
+                  onClick={() => navigate(`/stock/${stock.stock.symbol}`)}
                   sx={{ 
                     '&:hover': {
                       cursor: 'pointer',
                     },
                   }}
                 >
-                  <TableCell sx={{ fontWeight: 500 }}>{stock.name}</TableCell>
-                  <TableCell sx={{ color: 'text.secondary' }}>{stock.symbol}</TableCell>
+                  <TableCell sx={{ fontWeight: 500 }}>{stock.stock.name || stock.stock.symbol}</TableCell>
+                  <TableCell sx={{ color: 'text.secondary' }}>{stock.stock.symbol}</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 500 }}>
-                    ${stock.invested.toFixed(2)}
+                    ${stock.stockProfit.investedAmountInUsd.toFixed(2)}
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 500 }}>
+                    ${stock.stockProfit.currentValue.toFixed(2)}
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 500 }}>
+                    {stock.stockProfit.totalShares.toFixed(5)}
                   </TableCell>
                   <TableCell align="right">
                     <Chip
-                      label={`${stock.profit >= 0 ? '+' : ''}$${stock.profit.toFixed(2)}`}
-                      color={stock.profit >= 0 ? 'success' : 'error'}
+                      label={`${stock.stockProfit.profit >= 0 ? '+' : ''}$${stock.stockProfit.profit.toFixed(2)}`}
+                      color={stock.stockProfit.profit >= 0 ? 'success' : 'error'}
                       size="small"
                       sx={{ 
                         fontWeight: 500,
@@ -139,8 +130,8 @@ const InvestmentsTable = ({ refreshKey }: InvestmentsTableProps) => {
                   </TableCell>
                   <TableCell align="right">
                     <Chip
-                      label={`${stock.profitPercentage >= 0 ? '+' : ''}${stock.profitPercentage.toFixed(2)}%`}
-                      color={stock.profitPercentage >= 0 ? 'success' : 'error'}
+                      label={`${stock.stockProfit.profitPercentage >= 0 ? '+' : ''}${stock.stockProfit.profitPercentage.toFixed(2)}%`}
+                      color={stock.stockProfit.profitPercentage >= 0 ? 'success' : 'error'}
                       size="small"
                       sx={{ 
                         fontWeight: 500,

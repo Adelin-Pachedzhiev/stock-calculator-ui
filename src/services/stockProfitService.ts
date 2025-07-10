@@ -1,6 +1,7 @@
 import api from "./axiosInstanceProvider";
+import type { StockInvestmentProfitInfo } from "../types/stock";
 
-export const getProfits = async () => {
+export const getStockInvestmentProfitInfo = async (): Promise<StockInvestmentProfitInfo[]> => {
   const response = await api.get("/stock/profit");
   return response.data;
 };
