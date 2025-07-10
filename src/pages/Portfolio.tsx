@@ -15,6 +15,8 @@ import StockTransactionForm from "../components/transactions/StockTransactionFor
 import StockTransactionsTable from "../components/portfolio/StockTransactionsTable";
 import PortfolioValueCard from "../components/portfolio/PortfolioValueCard";
 import AddTransactionDialog from "../components/transactions/AddTransactionDialog";
+import UploadCsvDialog from '../components/transactions/UploadCsvDialog';
+import { uploadTransactionsCsv } from '../services/stockTransactionService';
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -50,11 +52,36 @@ const Portfolio = () => {
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(true);
   const theme = useTheme();
+  const [csvDialogOpen, setCsvDialogOpen] = useState(false);
+  const [csvError, setCsvError] = useState<string | undefined>(undefined);
+  const [csvLoading, setCsvLoading] = useState(false);
 
   const handleTransactionCreated = () => {
     setRefreshKey(prev => !prev);
     setIsTransactionDialogOpen(false);
   }
+
+  const refreshTransactions = () => {
+    // ... existing code to refresh transactions ...
+  };
+
+  const handleCsvUpload = async (file: File, platform: string) => {
+    setCsvLoading(true);
+    setCsvError(undefined);
+    try {
+      const response = await uploadTransactionsCsv(file, platform);
+      if (response.status >= 400) {
+        setCsvError(response.data?.error || 'Upload failed. Please check your file.');
+      } else {
+        setCsvDialogOpen(false);
+        refreshTransactions();
+      }
+    } catch (err: any) {
+      setCsvError(err?.message || 'Unexpected error.');
+    } finally {
+      setCsvLoading(false);
+    }
+  };
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: theme.palette.background.default }}>
@@ -65,16 +92,33 @@ const Portfolio = () => {
             <Typography variant="h4" fontWeight="bold">
               My Portfolio
             </Typography>
-            <AddTransactionDialog 
-              onTransactionCreated={handleTransactionCreated} 
-              sx={{
-                backgroundColor: 'white',
-                color: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                }
-              }}
-            />
+            <Stack direction="row" spacing={2}>
+              <AddTransactionDialog 
+                onTransactionCreated={handleTransactionCreated} 
+                sx={{
+                  backgroundColor: 'white',
+                  color: 'primary.main',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  }
+                }}
+              />
+              <Button 
+                variant="outlined" 
+                onClick={() => setCsvDialogOpen(true)}
+                sx={{
+                  backgroundColor: 'white',
+                  color: 'primary.main',
+                  borderColor: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    borderColor: 'primary.main',
+                  }
+                }}
+              >
+                Upload CSV
+              </Button>
+            </Stack>
           </Stack>
         </GradientHeader>
 
@@ -108,6 +152,14 @@ const Portfolio = () => {
         <StockTransactionForm 
           open={isTransactionDialogOpen} 
           onClose={() => setIsTransactionDialogOpen(false)} 
+        />
+
+        <UploadCsvDialog
+          open={csvDialogOpen}
+          onClose={() => setCsvDialogOpen(false)}
+          onUpload={handleCsvUpload}
+          error={csvError}
+          loading={csvLoading}
         />
       </Container>
     </Box>

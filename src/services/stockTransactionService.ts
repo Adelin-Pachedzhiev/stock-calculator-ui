@@ -49,4 +49,15 @@ export const deleteStockTransaction = async (id: number) => {
     } catch (error) {
         throw error;
     }
+};
+
+export const uploadTransactionsCsv = async (file: File, institution: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('institution', institution.toLowerCase());
+  const response = await api.post('/transactions/csv/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    validateStatus: () => true, // allow handling 400 errors
+  });
+  return response;
 }; 
