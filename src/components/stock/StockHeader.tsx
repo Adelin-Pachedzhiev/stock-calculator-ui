@@ -1,8 +1,8 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import type { Stock } from "../../types/stock";
+import type { StockDetails } from "../../types/stock";
 
 interface StockHeaderProps {
-    stock: Stock;
+    stock: StockDetails;
     onAddTransaction: () => void;
 }
 
