@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
   Alert,
+  Autocomplete,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
@@ -156,20 +157,22 @@ const StockTransactionForm = ({
           )}
 
           <Box display="flex" flexDirection="column" gap={3} sx={{ mt: 2 }}>
-            <TextField
-              select
-              label="Stock Symbol"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-              required
-              fullWidth
-            >
-              {stocks.map((s) => (
-                <MenuItem key={s.id} value={s.symbol}>
-                  {`${s.symbol} - ${s.name}`}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Autocomplete
+              options={stocks}
+              getOptionLabel={(option) => `${option.symbol} - ${option.name}`}
+              value={stocks.find((s) => s.symbol === symbol) || null}
+              onChange={(_, newValue) => setSymbol(newValue ? newValue.symbol : "")}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Stock Symbol"
+                  required
+                  fullWidth
+                />
+              )}
+              disabled={stocks.length === 0}
+            />
 
             <TextField
               label="Time of Transaction"
