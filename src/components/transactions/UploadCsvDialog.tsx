@@ -2,7 +2,18 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemButton, ListItemText, Typography, Box, Alert, Input } from '@mui/material';
 
 const MOCK_PLATFORMS = [
-  { name: 'Revolut', steps: ['Open Revolut app.', 'Go to Wealth > Stocks > History.', 'Export as CSV.'] }
+  {
+    name: 'Revolut', 
+    steps: [
+      'Open your Revolut app.',
+      'Select Stocks tab at the top.',
+      'Click on the three dots for More.',
+      'Select Statements then Account statement.',
+      'Select Excel then select the Start and End date to cover all trading history.',
+      'Click Get statement and download the statement to your phone.',
+      'Upload your file below.',
+    ]
+  }
 ];
 
 interface UploadCsvDialogProps {
