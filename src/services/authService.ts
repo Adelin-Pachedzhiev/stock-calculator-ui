@@ -9,3 +9,19 @@ export const exchangeGoogleTokenForJwtToken = async (
 
   return response.data["token"];
 };
+
+export const saveToken = (token: string) => {
+  localStorage.setItem('jwtToken', token);
+};
+
+export const getToken = (): string | null => {
+  return localStorage.getItem('jwtToken');
+};
+
+export const removeToken = () => {
+  localStorage.removeItem('jwtToken');
+};
+
+export const isAuthenticated = (): boolean => {
+  return !!getToken();
+};

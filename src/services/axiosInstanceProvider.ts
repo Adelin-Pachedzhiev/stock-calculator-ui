@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken, removeToken } from "./authService";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api",
@@ -7,7 +8,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwtToken");
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -20,9 +21,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear JWT token from localStorage
-      localStorage.removeItem("jwtToken");
-      
+      // Clear JWT token using authService
+      removeToken();
       // Redirect to login page
       window.location.href = "/login";
     }

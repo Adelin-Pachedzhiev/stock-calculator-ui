@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Integrations from "./pages/Integrations";
 import Portfolio from "./pages/Portfolio";
@@ -7,10 +7,11 @@ import { Box } from "@mui/material";
 import Stock from "./pages/Stock";
 
 function App() {
+  const location = useLocation();
+  const showHeader = location.pathname !== "/login";
   return (
-    <BrowserRouter>
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <AppHeader />
+        {showHeader && <AppHeader />}
         <Box component="main" sx={{ flexGrow: 1 }}>
           <Routes>
             <Route path="/" element={<Portfolio />} />
@@ -21,7 +22,6 @@ function App() {
           </Routes>
         </Box>
       </Box>
-    </BrowserRouter>
   );
 }
 
