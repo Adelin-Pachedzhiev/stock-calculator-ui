@@ -9,18 +9,23 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
-  useTheme
+  useTheme,
+  Grid
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getStockDetails, getStockPriceHistory, getStockTransactions } from "../services/stockService";
+import { getStockDetails, getStockTransactions } from "../services/stockService";
 import StockTransactionForm from "../components/transactions/StockTransactionForm";
 import { deleteStockTransaction } from "../services/stockTransactionService";
 import StockHeader from "../components/stock/StockHeader";
-import StockPriceChart from "../components/stock/StockPriceChart";
+
 import StockTransactionsTable from "../components/stock/StockTransactionsTable";
+import StockNews from "../components/stock/StockNews";
 import type { StockDetails, Transaction, PriceHistory } from "../types/stock";
 import { getWatchlist, addToWatchlist, removeFromWatchlist, isInWatchlist as checkIsInWatchlist } from '../services/watchlistService';
+import PriceChart from "../components/stock/PriceChart";
+import FundamentalData from "../components/stock/FundamentalData";
+import CompanyProfile from "../components/stock/CompanyProfile";
 
 const Stock = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -28,7 +33,6 @@ const Stock = () => {
 
   const [stock, setStock] = useState<StockDetails | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -79,14 +83,12 @@ const Stock = () => {
       if (!symbol) return;
       try {
         setLoading(true);
-        const [details, transactions, history] = await Promise.all([
+        const [details, transactions] = await Promise.all([
           getStockDetails(symbol),
           getStockTransactions(symbol),
-          getStockPriceHistory(symbol)
         ]);
         setStock(details);
         setTransactions(transactions);
-        setPriceHistory(history);
       } catch (error) {
         console.error("Failed to fetch stock data", error);
       } finally {
@@ -152,7 +154,7 @@ const Stock = () => {
           onToggleWatchlist={handleToggleWatchlist}
         />
 
-        <StockPriceChart priceHistory={priceHistory} />
+
 
         {transactions.length > 0 && (
           <StockTransactionsTable 
@@ -172,6 +174,18 @@ const Stock = () => {
           transactionId={selectedTransactionId}
         />
 
+        <Box sx={{ width: '100%', mt: 4, minHeight: 500 }}>
+          <PriceChart symbol={stock.symbol} />
+        </Box>
+        <Box sx={{ width: { xs: '100%', md: '100%' }}}>
+          <StockNews symbol={symbol || "TSLA"} />
+        </Box>
+        <Box sx={{ width: '100%', mt: 4, minHeight: 500 }}>
+          <FundamentalData symbol={stock.symbol} />
+        </Box>
+        <Box sx={{ width: '100%', mt: 4, minHeight: 500 }}>
+          <CompanyProfile symbol={stock.symbol} />
+        </Box>
         <Dialog
           open={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}

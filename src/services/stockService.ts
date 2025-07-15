@@ -31,22 +31,6 @@ export const getStockTransactions = async (symbol: string): Promise<Array<StockT
     return response.data;
 }
 
-export const getStockPriceHistory = async (symbol: string) => {
-    // const response = await api.get(`/stock/${symbol}/history`);
-    // return response.data;
-    console.log(`Fetching price history for ${symbol}`);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const data = [];
-    let price = Math.random() * 200 + 100;
-    for (let i = 0; i < 30; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() - (30 - i));
-        price += (Math.random() - 0.5) * 5;
-        data.push({ date: date.toISOString().split('T')[0], price: price });
-    }
-    return data;
-} 
-
 export interface StockEntity {
     id: number;
     symbol: string;
