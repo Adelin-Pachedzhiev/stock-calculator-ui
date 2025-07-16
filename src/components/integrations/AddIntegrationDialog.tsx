@@ -76,7 +76,7 @@ const AddIntegrationDialog = ({ open, onClose }: AddIntegrationDialogProps) => {
       case 'trading':
         return 'Connect Trading212 Account';
       case 'plaid':
-        return 'Connect Bank Account';
+        return 'Connect your investment platform';
       default:
         return 'Add Integration';
     }
