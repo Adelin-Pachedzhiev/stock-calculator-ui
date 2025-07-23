@@ -182,6 +182,9 @@ const StockTransactionForm = ({
               InputLabelProps={{ shrink: true }}
               required
               fullWidth
+              inputProps={{
+                max: new Date().toISOString().slice(0, 16)
+              }}
             />
 
             <Box display="flex" gap={2} flexWrap="wrap">
