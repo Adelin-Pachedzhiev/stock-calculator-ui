@@ -58,12 +58,12 @@ const Portfolio = () => {
   const [csvLoading, setCsvLoading] = useState(false);
 
   const handleTransactionCreated = () => {
-    setRefreshKey(prev => !prev);
+    refreshTransactions();
     setIsTransactionDialogOpen(false);
   }
 
   const refreshTransactions = () => {
-    // ... existing code to refresh transactions ...
+    setRefreshKey(prev => !prev);
   };
 
   const handleCsvUpload = async (file: File, platform: string) => {

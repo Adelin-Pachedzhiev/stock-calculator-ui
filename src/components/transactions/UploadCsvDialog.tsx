@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemButton, ListItemText, Typography, Box, Alert, Input } from '@mui/material';
 
-const MOCK_PLATFORMS = [
+const PLATFORMS = [
   {
     name: 'Revolut', 
     steps: [
@@ -45,7 +45,7 @@ const UploadCsvDialog: React.FC<UploadCsvDialogProps> = ({ open, onClose, onUplo
     }
   };
 
-  const platformObj = MOCK_PLATFORMS.find(p => p.name === selectedPlatform);
+  const platformObj = PLATFORMS.find(p => p.name === selectedPlatform);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -55,7 +55,7 @@ const UploadCsvDialog: React.FC<UploadCsvDialogProps> = ({ open, onClose, onUplo
           <>
             <Typography>Select your platform:</Typography>
             <List>
-              {MOCK_PLATFORMS.map(platform => (
+              {PLATFORMS.map(platform => (
                 <ListItem key={platform.name} disablePadding>
                   <ListItemButton onClick={() => handlePlatformClick(platform.name)}>
                     <ListItemText primary={platform.name} />
