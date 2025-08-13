@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAvailableStocks } from '../../services/stockService';
+import { useAuth } from '../../contexts/AuthContext';
 import type { StockInfo } from '../../types/stock';
 
 const AppHeader = () => {
@@ -10,6 +11,7 @@ const AppHeader = () => {
   const [stocks, setStocks] = useState<StockInfo[]>([]);
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
+  const { isLoggedIn, logout } = useAuth();
 
   useEffect(() => {
     getAvailableStocks().then(setStocks).catch(() => setStocks([]));
@@ -25,11 +27,9 @@ const AppHeader = () => {
 
   const handleLogout = () => {
     handleClose();
-    localStorage.removeItem('jwtToken');
+    logout();
     navigate('/login');
   };
-
-  const isLoggedIn = !!localStorage.getItem('jwtToken');
 
   return (
     <AppBar position="static" elevation={0}>

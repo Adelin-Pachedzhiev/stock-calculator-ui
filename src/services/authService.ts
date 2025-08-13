@@ -1,4 +1,4 @@
-import api  from "./axiosInstanceProvider";
+import api from "./axiosInstanceProvider";
 
 export const exchangeGoogleTokenForJwtToken = async (
   googleCredential: string | undefined
@@ -8,20 +8,4 @@ export const exchangeGoogleTokenForJwtToken = async (
   });
 
   return response.data["token"];
-};
-
-export const saveToken = (token: string) => {
-  localStorage.setItem('jwtToken', token);
-};
-
-export const getToken = (): string | null => {
-  return localStorage.getItem('jwtToken');
-};
-
-export const removeToken = () => {
-  localStorage.removeItem('jwtToken');
-};
-
-export const isAuthenticated = (): boolean => {
-  return !!getToken();
 };

@@ -2,16 +2,29 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { exchangeGoogleTokenForJwtToken } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { useEffect } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const onSuccessfulLogin = async (credentialResponse: CredentialResponse) => {
-    const jwtToken = await exchangeGoogleTokenForJwtToken(
-      credentialResponse.credential
-    );
-    localStorage.setItem("jwtToken", jwtToken);
+  const { login, isLoggedIn, userRole } = useAuth();
 
-    navigate("/");
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, userRole, navigate]);
+
+  const onSuccessfulLogin = async (credentialResponse: CredentialResponse) => {
+    try {
+      const jwtToken = await exchangeGoogleTokenForJwtToken(
+        credentialResponse.credential
+      );
+
+      login(jwtToken);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
