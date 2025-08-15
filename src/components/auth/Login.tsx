@@ -43,15 +43,15 @@ const Login = () => {
         sx={{
           padding: 5,
           width: "100%",
-          maxWidth: 380,
+          maxWidth: 450,
           borderRadius: 3,
           boxShadow: 3,
           textAlign: "center",
         }}
       >
-        <Stack spacing={3}>
+        <Stack spacing={5}>
           <Typography variant="h5" fontWeight={600}>
-            Sign in to your account
+            Sign in or register to your account
           </Typography>
 
           <Box display="flex" justifyContent="center">
