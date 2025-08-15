@@ -42,3 +42,23 @@ export const getAvailableStocks = async () : Promise<StockEntity[]> => {
     const response = await api.get("/stock");
     return response.data;
   };
+
+// Admin-only stock management functions
+export const getAllStocks = async (): Promise<StockEntity[]> => {
+    const response = await api.get("/admin/stock");
+    return response.data;
+};
+
+export const createStock = async (stock: Omit<StockEntity, 'id'>): Promise<StockEntity> => {
+    const response = await api.post("/admin/stock", stock);
+    return response.data;
+};
+
+export const updateStock = async (id: number, stock: Omit<StockEntity, 'id'>): Promise<StockEntity> => {
+    const response = await api.put(`/admin/stock/${id}`, stock);
+    return response.data;
+};
+
+export const deleteStock = async (id: number): Promise<void> => {
+    await api.delete(`/admin/stock/${id}`);
+};

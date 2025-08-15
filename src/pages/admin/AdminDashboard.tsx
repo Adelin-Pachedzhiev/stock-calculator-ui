@@ -1,12 +1,13 @@
 import { Box, Typography, Paper } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
+import StocksTable from '../../components/admin/StocksTable';
 
 const AdminDashboard = () => {
   const { userEmail } = useAuth();
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Paper elevation={3} sx={{ padding: 4, textAlign: 'center' }}>
+      <Paper elevation={3} sx={{ padding: 4, textAlign: 'center', mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
           Hello Captain! 🚢
         </Typography>
@@ -18,6 +19,10 @@ const AdminDashboard = () => {
             Logged in as: {userEmail}
           </Typography>
         )}
+      </Paper>
+      
+      <Paper elevation={3} sx={{ padding: 4 }}>
+        <StocksTable />
       </Paper>
     </Box>
   );
