@@ -49,7 +49,7 @@ const UploadCsvDialog: React.FC<UploadCsvDialogProps> = ({ open, onClose, onUplo
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Upload Transactions CSV</DialogTitle>
+      <DialogTitle>Upload Transactions from a CSV file</DialogTitle>
       <DialogContent>
         {!selectedPlatform ? (
           <>
