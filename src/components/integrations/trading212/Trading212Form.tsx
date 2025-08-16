@@ -1,4 +1,4 @@
-import { Box, Button, DialogActions, TextField, useTheme } from "@mui/material";
+import { Box, Button, DialogActions, TextField, useTheme, Typography, Link } from "@mui/material";
 import { postTrading212Token } from "../../../services/trading212Service";
 
 interface Trading212FormProps {
@@ -8,6 +8,13 @@ interface Trading212FormProps {
 
 const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
   const theme = useTheme();
+
+  const steps = [
+    "Log into your Trading212 account",
+    "Go to Settings → API (Beta)",
+    "Generate a new API key with read permissions",
+    "Copy the token and paste it below"
+  ];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,9 +27,29 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          How to get your Trading212 API Token:
+        </Typography>
+        {steps.map((step, index) => (
+          <Typography key={index} variant="body2" sx={{ mb: 1 }}>
+            {index + 1}. {step}
+          </Typography>
+        ))}
+        <Typography variant="caption" color="text.secondary">
+          For more information, visit{' '}
+          <Link 
+            href="https://helpcentre.trading212.com/hc/en-us/articles/14584770928157-How-can-I-generate-an-API-key" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            Trading212 documentation
+          </Link>
+        </Typography>
+      </Box>
       <TextField
         name="token"
-        label="Trading212 Token"
+        label="API Token"
         required
         fullWidth
         sx={{ mb: 2 }}
