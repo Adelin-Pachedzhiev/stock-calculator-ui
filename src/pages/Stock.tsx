@@ -9,8 +9,7 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
-  useTheme,
-  Grid
+  useTheme
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -18,11 +17,11 @@ import { getStockDetails, getStockTransactions } from "../services/stockService"
 import StockTransactionForm from "../components/transactions/StockTransactionForm";
 import { deleteStockTransaction } from "../services/stockTransactionService";
 import StockHeader from "../components/stock/StockHeader";
-
+import StockProfitCard from "../components/stock/StockProfitCard";
 import StockTransactionsTable from "../components/stock/StockTransactionsTable";
 import StockNews from "../components/stock/StockNews";
-import type { StockDetails, Transaction, PriceHistory } from "../types/stock";
-import { getWatchlist, addToWatchlist, removeFromWatchlist, isInWatchlist as checkIsInWatchlist } from '../services/watchlistService';
+import type { StockDetails, Transaction } from "../types/stock";
+import {addToWatchlist, removeFromWatchlist, isInWatchlist as checkIsInWatchlist } from '../services/watchlistService';
 import PriceChart from "../components/stock/PriceChart";
 import FundamentalData from "../components/stock/FundamentalData";
 import CompanyProfile from "../components/stock/CompanyProfile";
@@ -38,12 +37,15 @@ const Stock = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
   const [isInWatchlist, setIsInWatchlist] = useState<boolean>(false);
+  const [refreshKey, setRefreshKey] = useState(false);
 
   const fetchStockTransactions = async () => {
     if (!symbol) return;
     try {
       const transactions = await getStockTransactions(symbol);
       setTransactions(transactions);
+      // Refresh the profit card when transactions change
+      setRefreshKey(prev => !prev);
     } catch (error) {
       console.error("Failed to fetch stock transactions", error);
     }
@@ -104,7 +106,7 @@ const Stock = () => {
       try {
         const result = await checkIsInWatchlist(stock.stockId);
         setIsInWatchlist(result);
-      } catch (err) {
+      } catch {
         setIsInWatchlist(false);
       }
     };
@@ -121,7 +123,7 @@ const Stock = () => {
         await addToWatchlist(stock.stockId);
         setIsInWatchlist(true);
       }
-    } catch (err) {
+    } catch {
       // Optionally show error
     }
   };
@@ -153,6 +155,10 @@ const Stock = () => {
           isInWatchlist={isInWatchlist}
           onToggleWatchlist={handleToggleWatchlist}
         />
+
+        <Box sx={{ mb: 4 }}>
+          <StockProfitCard symbol={stock.symbol} refreshKey={refreshKey} />
+        </Box>
 
 
 
