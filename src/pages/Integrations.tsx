@@ -19,12 +19,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SyncIcon from "@mui/icons-material/Sync";
 import AddIntegrationDialog from "../components/integrations/AddIntegrationDialog";
+import DeleteIntegrationDialog from "../components/integrations/DeleteIntegrationDialog";
 import { getIntegrations, deleteIntegration, syncIntegration, type Integration } from "../services/integrationService";
 import ErrorDialog from "../components/common/ErrorDialog";
 
 const Integrations = () => {
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [integrationToDelete, setIntegrationToDelete] = useState<Integration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [syncingId, setSyncingId] = useState<string | null>(null);
@@ -37,8 +40,8 @@ const Integrations = () => {
     try {
       const data = await getIntegrations();
       setIntegrations(data);
-    } catch (err: any) {
-      setError(err?.message || "Failed to fetch integrations");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to fetch integrations");
     } finally {
       setLoading(false);
     }
@@ -48,18 +51,32 @@ const Integrations = () => {
     fetchIntegrations();
   }, []);
 
-  const handleRemoveIntegration = async (id: string) => {
-    setDeletingId(id);
+  const handleRemoveIntegration = (integration: Integration) => {
+    setIntegrationToDelete(integration);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!integrationToDelete) return;
+    
+    setDeletingId(integrationToDelete.id);
     setError(null);
     try {
-      await deleteIntegration(id);
+      await deleteIntegration(integrationToDelete.id);
       // Refresh the integrations list after successful deletion
       await fetchIntegrations();
-    } catch (err: any) {
-      setError(err?.message || "Failed to delete integration");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to delete integration");
     } finally {
       setDeletingId(null);
+      setIsDeleteDialogOpen(false);
+      setIntegrationToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+    setIntegrationToDelete(null);
   };
 
   const handleAddIntegration = () => {
@@ -79,8 +96,8 @@ const Integrations = () => {
     try {
       await syncIntegration(id);
       // Optionally, you can refresh integrations or show a success message
-    } catch (err: any) {
-      setError(err?.message || "Failed to sync integration. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to sync integration. Please try again.");
     } finally {
       setSyncingId(null);
     }
@@ -142,7 +159,7 @@ const Integrations = () => {
                     <TableCell>{new Date(integration.lastChangedAt).toLocaleDateString()}</TableCell>
                     <TableCell align="right">
                       <IconButton
-                        onClick={() => handleRemoveIntegration(integration.id)}
+                        onClick={() => handleRemoveIntegration(integration)}
                         color="error"
                         size="small"
                         disabled={deletingId === integration.id}
@@ -176,6 +193,13 @@ const Integrations = () => {
         <AddIntegrationDialog 
           open={isAddDialogOpen} 
           onClose={handleDialogClose} 
+        />
+
+        <DeleteIntegrationDialog
+          open={isDeleteDialogOpen}
+          integrationPlatform={integrationToDelete?.platform || ""}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
         />
       </Container>
       <ErrorDialog message={error} onClose={() => setError(null)} />
