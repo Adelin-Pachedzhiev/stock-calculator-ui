@@ -1,13 +1,16 @@
-import { Box, Button, DialogActions, TextField, useTheme, Typography, Link } from "@mui/material";
+import { Box, Button, DialogActions, TextField, useTheme, Typography, Link, Alert } from "@mui/material";
 import { postTrading212Token } from "../../../services/trading212Service";
+import { useState } from "react";
 
 interface Trading212FormProps {
-  onSubmit: (token: string) => void;
+  onSubmit: () => void;
   onBack: () => void;
 }
 
 const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
   const theme = useTheme();
+  const [error, setError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const steps = [
     "Log into your Trading212 account",
@@ -18,11 +21,25 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const secret = formData.get('token') as string;
-    await postTrading212Token(secret);
+    setError("");
+    setIsSubmitting(true);
     
-    onSubmit(secret);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const secret = formData.get('token') as string;
+      await postTrading212Token(secret);
+      
+      onSubmit();
+    } catch (err: unknown) {
+      const error = err as { response?: { status: number; data?: { message: string } } };
+      if (error.response?.status === 400 && error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -47,6 +64,11 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
           </Link>
         </Typography>
       </Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <TextField
         name="token"
         label="API Token"
@@ -62,6 +84,7 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
         <Button
           type="submit"
           variant="contained"
+          disabled={isSubmitting}
           sx={{
             backgroundColor: theme.palette.primary.main,
             '&:hover': {
@@ -69,7 +92,7 @@ const Trading212Form = ({ onSubmit, onBack }: Trading212FormProps) => {
             }
           }}
         >
-          Connect
+          {isSubmitting ? "Connecting..." : "Connect"}
         </Button>
       </DialogActions>
     </Box>

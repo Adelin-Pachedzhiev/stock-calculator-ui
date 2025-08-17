@@ -26,17 +26,14 @@ const AddIntegrationDialog = ({ open, onClose }: AddIntegrationDialogProps) => {
     onClose();
   };
 
-  const handleTradingSubmit = (token: string) => {
-    // TODO: Implement Trading212 integration
-    console.log("Trading212 token:", token);
-    onClose(true); // Indicate integration was added
+  const handleTradingSubmit = () => {
+    onClose(true);
     setSelectedType(null);
   };
 
   const handlePlaidSuccess = () => {
-    // TODO: Handle successful Plaid integration
     console.log("Plaid integration successful");
-    onClose(true); // Indicate integration was added
+    onClose(true);
     setSelectedType(null);
   };
 
