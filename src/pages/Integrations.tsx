@@ -95,7 +95,8 @@ const Integrations = () => {
     setError(null);
     try {
       await syncIntegration(id);
-      // Optionally, you can refresh integrations or show a success message
+      // Refresh integrations to update lastSyncAt
+      await fetchIntegrations();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to sync integration. Please try again.");
     } finally {
