@@ -73,18 +73,28 @@ const StockTransactionForm = ({
         try {
           const tx = await getStockTransaction(transactionId);
           setSymbol(tx.stock.symbol);
-          setTime(tx.timeOfTransaction);
+          // Convert the API date format to datetime-local format (YYYY-MM-DDTHH:mm)
+          const date = new Date(tx.timeOfTransaction);
+          const formattedDate = date.toISOString().slice(0, 16);
+          setTime(formattedDate);
           setPrice(tx.price.toString());
           setQuantity(tx.quantity.toString());
           setFee(tx.fee.toString());
           setType(tx.type);
-        } catch (error) {
+        } catch {
           setError("Failed to fetch transaction details.");
         }
       };
       fetchTransaction();
     } else if (!open) {
-      handleClose(true);
+      // Reset form state when dialog closes
+      setSymbol("");
+      setTime("");
+      setPrice("");
+      setQuantity("");
+      setFee("0");
+      setType(TransactionType.BUY);
+      setError(null);
     }
   }, [transactionId, open]);
 
@@ -194,7 +204,7 @@ const StockTransactionForm = ({
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
+                slotProps={{ htmlInput: { min: 0, step: "any" } }}
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
@@ -203,7 +213,7 @@ const StockTransactionForm = ({
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
-                slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
+                slotProps={{ htmlInput: { min: 0, step: "any" } }}
                 sx={{ flex: 1, minWidth: 140 }}
               />
               <TextField
