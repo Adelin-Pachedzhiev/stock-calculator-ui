@@ -131,13 +131,14 @@ const Integrations = () => {
               <TableRow>
                 <TableCell>Platform</TableCell>
                 <TableCell>Date Added</TableCell>
+                <TableCell>Last Sync</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={3} align="center">
+                  <TableCell colSpan={4} align="center">
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
                       <CircularProgress size={20} sx={{ mr: 1 }} />
                       <Typography color="text.secondary">Loading...</Typography>
@@ -146,7 +147,7 @@ const Integrations = () => {
                 </TableRow>
               ) : integrations.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} align="center">
+                  <TableCell colSpan={4} align="center">
                     <Typography color="text.secondary">
                       No integrations found. Add your first integration to get started.
                     </Typography>
@@ -156,7 +157,13 @@ const Integrations = () => {
                 integrations.map((integration) => (
                   <TableRow key={integration.id}>
                     <TableCell>{integration.platform}</TableCell>
-                    <TableCell>{new Date(integration.lastChangedAt).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(integration.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>
+                      {integration.lastSyncAt 
+                        ? new Date(integration.lastSyncAt).toLocaleString()
+                        : 'Never'
+                      }
+                    </TableCell>
                     <TableCell align="right">
                       <IconButton
                         onClick={() => handleRemoveIntegration(integration)}

@@ -3,7 +3,8 @@ import api from "./axiosInstanceProvider";
 export interface Integration {
   id: string;
   platform: string;
-  lastChangedAt: string;
+  createdAt: string;
+  lastSyncAt: string;
 }
 
 export const getIntegrations = async (): Promise<Integration[]> => {
