@@ -49,11 +49,7 @@ function StockNews({ symbol }: { symbol: string }) {
   return (
     <Paper sx={{ height: 400, overflow: 'hidden' }}>
       <div className="tradingview-widget-container" ref={container}>
-        {/* TradingView will inject its own widget here */}
         <div className="tradingview-widget-copyright">
-          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-            <span className="blue-text">Track all markets on TradingView</span>
-          </a>
         </div>
       </div>
     </Paper>

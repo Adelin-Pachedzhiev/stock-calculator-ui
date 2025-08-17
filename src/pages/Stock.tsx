@@ -186,11 +186,20 @@ const Stock = () => {
         <Box sx={{ width: { xs: '100%', md: '100%' }}}>
           <StockNews symbol={symbol || "TSLA"} />
         </Box>
-        <Box sx={{ width: '100%', mt: 4, minHeight: 500 }}>
-          <FundamentalData symbol={stock.symbol} />
-        </Box>
-        <Box sx={{ width: '100%', mt: 4, minHeight: 500 }}>
-          <CompanyProfile symbol={stock.symbol} />
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 3, 
+          mt: 4, 
+          flexDirection: { xs: 'column', md: 'row' },
+          minHeight: 700,
+          width: '100%'
+        }}>
+          <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
+            <FundamentalData symbol={stock.symbol} />
+          </Box>
+          <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
+            <CompanyProfile symbol={stock.symbol} />
+          </Box>
         </Box>
         <Dialog
           open={isDeleteDialogOpen}
