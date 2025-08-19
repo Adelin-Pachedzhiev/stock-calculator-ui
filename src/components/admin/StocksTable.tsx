@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Paper,
   Table,
@@ -18,8 +18,10 @@ import {
   DialogContentText,
   CircularProgress,
   Alert,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Search } from '@mui/icons-material';
 import { getAllStocks, deleteStock, type StockEntity } from '../../services/stockService';
 import StockFormDialog from './StockFormDialog';
 import ErrorDialog from '../common/ErrorDialog';
@@ -33,6 +35,7 @@ const StocksTable = () => {
   const [editingStock, setEditingStock] = useState<StockEntity | null>(null);
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchStocks = async () => {
     try {
@@ -95,6 +98,19 @@ const StocksTable = () => {
     setEditingStock(null);
   };
 
+  const filteredStocks = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return stocks;
+    }
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return stocks.filter(stock =>
+      stock.symbol.toLowerCase().includes(lowerSearchTerm) ||
+      stock.name.toLowerCase().includes(lowerSearchTerm) ||
+      stock.description.toLowerCase().includes(lowerSearchTerm)
+    );
+  }, [stocks, searchTerm]);
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -118,6 +134,24 @@ const StocksTable = () => {
         </Button>
       </Box>
 
+      {/* Search Bar */}
+      <Box mb={3}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search stocks by symbol, name, or description..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -128,14 +162,14 @@ const StocksTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Symbol</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell sx={{ width: '10%' }}>Symbol</TableCell>
+              <TableCell sx={{ width: '20%' }}>Name</TableCell>
+              <TableCell sx={{ width: '55%' }}>Description</TableCell>
+              <TableCell align="center" sx={{ width: '15%' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {stocks.map((stock) => (
+            {filteredStocks.map((stock) => (
               <TableRow key={stock.id} hover>
                 <TableCell>
                   <Typography variant="body2" fontWeight="bold">
@@ -147,12 +181,11 @@ const StocksTable = () => {
                   <Typography
                     variant="body2"
                     sx={{
-                      maxWidth: 300,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
+                      maxWidth: '100%',
+                      wordWrap: 'break-word',
+                      whiteSpace: 'normal',
+                      lineHeight: 1.4,
                     }}
-                    title={stock.description}
                   >
                     {stock.description}
                   </Typography>
@@ -175,6 +208,15 @@ const StocksTable = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {filteredStocks.length === 0 && stocks.length > 0 && (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  <Typography variant="body2" color="text.secondary">
+                    No stocks found matching your search
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {stocks.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} align="center">
@@ -188,7 +230,6 @@ const StocksTable = () => {
         </Table>
       </TableContainer>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
@@ -199,6 +240,7 @@ const StocksTable = () => {
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete the stock "{stockToDelete?.symbol} - {stockToDelete?.name}"?
+            This will delete all transactions for this stock and all data for stock price.
             This action cannot be undone.
           </DialogContentText>
         </DialogContent>
@@ -220,7 +262,6 @@ const StocksTable = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Stock Form Dialog */}
       <StockFormDialog
         open={formDialogOpen}
         onClose={handleFormClose}
