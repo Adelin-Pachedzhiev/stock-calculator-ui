@@ -10,6 +10,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
+import { AxiosError } from 'axios';
 import { createStock, updateStock, type StockEntity } from '../../services/stockService';
 
 interface StockFormDialogProps {
@@ -79,11 +80,19 @@ const StockFormDialog = ({ open, onClose, onStockSaved, stock }: StockFormDialog
     } catch (err: unknown) {
       let errorMessage = `Failed to ${isEditing ? 'update' : 'create'} stock`;
       
-      if (err instanceof Error) {
+      // Handle Axios errors specifically
+      if (err instanceof AxiosError) {
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response?.data?.error) {
+          errorMessage = err.response.data.error;
+        } else if (err.response?.status === 400) {
+          errorMessage = 'Invalid data provided. Please check your input.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        errorMessage = axiosError.response?.data?.message || errorMessage;
       }
       
       setError(errorMessage);
