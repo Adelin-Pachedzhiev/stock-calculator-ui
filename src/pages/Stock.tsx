@@ -195,10 +195,10 @@ const Stock = () => {
           width: '100%'
         }}>
           <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
-            <FundamentalData symbol={stock.symbol} />
+            <CompanyProfile symbol={stock.symbol} />
           </Box>
           <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
-            <CompanyProfile symbol={stock.symbol} />
+            <FundamentalData symbol={stock.symbol} />
           </Box>
         </Box>
         <Dialog
