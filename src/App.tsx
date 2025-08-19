@@ -5,6 +5,7 @@ import Integrations from "./pages/Integrations";
 import Portfolio from "./pages/Portfolio";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AppHeader from "./components/common/AppHeader";
+import AdminHeader from "./components/admin/AdminHeader";
 import { Box } from "@mui/material";
 import Stock from "./pages/Stock";
 import { useAuth } from "./contexts/AuthContext";
@@ -25,7 +26,7 @@ function App() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {showHeader && <AppHeader />}
+      {showHeader && (userRole === "ADMIN" ? <AdminHeader /> : <AppHeader />)}
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Routes>
           <Route path="/login" element={<Login />} />
